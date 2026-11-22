@@ -5,15 +5,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Perun – Panel działek</title>
         <link rel="stylesheet" href="./styles/main.css" />
-        <script src="./scripts/staticParcels.js" defer></script>
-        <script src="./scripts/index.js" defer></script>
     </head>
 
     <body>
         <header class="navbar">
             <div class="navbar-container">
                 <a
-                    href="index.html"
+                    href="./index.html"
                     class="brand-link"
                     aria-label="Panel działek Perun"
                 >
@@ -25,13 +23,13 @@
                 </a>
 
                 <nav class="nav-actions">
-                    <a href="index.html" class="nav-link is-active"
+                    <a href="./index.html" class="nav-link is-active"
                         >Moje działki</a
                     >
-                    <a href="dzialka.html?id=1" class="nav-link"
+                    <a href="./dzialka.html?id=1" class="nav-link"
                         >Podgląd mapy i czujek</a
                     >
-                    <a href="wyszukiwarka.html" class="btn btn-primary btn-sm"
+                    <a href="./wyszukiwarka.html" class="btn btn-primary btn-sm"
                         >Wyszukiwarka działek</a
                     >
                 </nav>
@@ -42,17 +40,18 @@
             <section class="dashboard-header">
                 <div>
                     <span class="hero-badge"
-                        >Panel monitoringu upraw • Wersja demonstracyjna</span
+                        >Panel monitoringu upraw • 4 działki
+                        demonstracyjne</span
                     >
                     <h1>Lista działek</h1>
                     <p class="dashboard-subtitle">
                         Wybierz jedną z 4 zdefiniowanych działek, aby otworzyć
-                        jej podgląd oraz interpolację temperatur z czujek.
+                        jej podgląd, odczyty z czujek oraz interpolację IDW.
                     </p>
                 </div>
                 <div class="dashboard-header-actions">
-                    <a href="wyszukiwarka.html" class="btn-outline"
-                        >Przejdź do wyszukiwarki i raportu &rarr;</a
+                    <a href="./wyszukiwarka.html" class="btn-outline"
+                        >Wyszukiwarka Geoportal i raport &rarr;</a
                     >
                 </div>
             </section>
@@ -68,11 +67,297 @@
             <div class="footer-content">
                 <span>&copy; 2026 Perun. Wszelkie prawa zastrzeżone.</span>
                 <div class="footer-links">
-                    <a href="index.html">Lista działek</a>
-                    <a href="dzialka.html?id=1">Podgląd działki</a>
-                    <a href="wyszukiwarka.html">Wyszukiwarka</a>
+                    <a href="./index.html">Lista działek</a>
+                    <a href="./dzialka.html?id=1">Podgląd działki</a>
+                    <a href="./wyszukiwarka.html">Wyszukiwarka</a>
                 </div>
             </div>
         </footer>
+
+        <script>
+            (function () {
+                "use strict";
+
+                const MOCK_PARCELS = [
+                    {
+                        fieldId: 1,
+                        teryt: "181103_2.0022.90/2",
+                        name: "Dąbrówka Osuchowska 90/2",
+                        lat: 50.317156,
+                        lon: 21.304768,
+                        crop: "Burak cukrowy",
+                        areaHa: 4.82,
+                        points: [
+                            { x: 0.878671, y: 1.0 },
+                            { x: 0.0, y: 0.915707 },
+                            { x: 0.218254, y: 0.0 },
+                            { x: 0.978396, y: 0.062693 },
+                        ],
+                        sensors: [
+                            {
+                                id: "T-101",
+                                name: "Termometr północno-zachodni",
+                                temp: 11.5,
+                                nx: 0.24,
+                                ny: 0.78,
+                            },
+                            {
+                                id: "T-102",
+                                name: "Termometr środkowy",
+                                temp: 21.5,
+                                nx: 0.52,
+                                ny: 0.5,
+                            },
+                            {
+                                id: "T-103",
+                                name: "Termometr południowy (strefa nagrzana)",
+                                temp: 36.5,
+                                nx: 0.76,
+                                ny: 0.22,
+                            },
+                            {
+                                id: "T-104",
+                                name: "Termometr północno-wschodni",
+                                temp: 17.0,
+                                nx: 0.72,
+                                ny: 0.8,
+                            },
+                        ],
+                    },
+                    {
+                        fieldId: 2,
+                        teryt: "142510_5.0010.AR_1.170",
+                        name: "Grabina 170",
+                        lat: 51.316505,
+                        lon: 21.304529,
+                        crop: "Pszenica ozima",
+                        areaHa: 3.45,
+                        points: [
+                            { x: 0.0, y: 0.0 },
+                            { x: 0.717056, y: 0.09754 },
+                            { x: 0.747255, y: 0.274031 },
+                            { x: 0.851465, y: 0.800754 },
+                            { x: 0.525912, y: 1.0 },
+                        ],
+                        sensors: [
+                            {
+                                id: "T-201",
+                                name: "Termometr dolina",
+                                temp: 8.5,
+                                nx: 0.28,
+                                ny: 0.18,
+                            },
+                            {
+                                id: "T-202",
+                                name: "Termometr centralny",
+                                temp: 18.5,
+                                nx: 0.52,
+                                ny: 0.5,
+                            },
+                            {
+                                id: "T-203",
+                                name: "Termometr grzbiet",
+                                temp: 30.5,
+                                nx: 0.66,
+                                ny: 0.78,
+                            },
+                        ],
+                    },
+                    {
+                        fieldId: 3,
+                        teryt: "181101_1.0004.142/5",
+                        name: "Mielec – Kwatera Wschodnia",
+                        lat: 50.289412,
+                        lon: 21.428901,
+                        crop: "Kukurydza",
+                        areaHa: 6.15,
+                        points: [
+                            { x: 0.04, y: 0.14 },
+                            { x: 0.96, y: 0.06 },
+                            { x: 0.92, y: 0.88 },
+                            { x: 0.1, y: 0.94 },
+                        ],
+                        sensors: [
+                            {
+                                id: "T-301",
+                                name: "Termometr zachód",
+                                temp: 14.5,
+                                nx: 0.24,
+                                ny: 0.52,
+                            },
+                            {
+                                id: "T-302",
+                                name: "Termometr środek",
+                                temp: 21.0,
+                                nx: 0.52,
+                                ny: 0.48,
+                            },
+                            {
+                                id: "T-303",
+                                name: "Termometr wschód",
+                                temp: 26.5,
+                                nx: 0.78,
+                                ny: 0.3,
+                            },
+                            {
+                                id: "T-304",
+                                name: "Termometr północ",
+                                temp: 17.5,
+                                nx: 0.5,
+                                ny: 0.76,
+                            },
+                        ],
+                    },
+                    {
+                        fieldId: 4,
+                        teryt: "181109_2.0011.218",
+                        name: "Wadowice Górne – Pole Południowe",
+                        lat: 50.27381,
+                        lon: 21.26942,
+                        crop: "Rzepak ozimy",
+                        areaHa: 5.3,
+                        points: [
+                            { x: 0.0, y: 0.25 },
+                            { x: 0.78, y: 0.0 },
+                            { x: 1.0, y: 0.78 },
+                            { x: 0.24, y: 1.0 },
+                        ],
+                        sensors: [
+                            {
+                                id: "T-401",
+                                name: "Termometr strefa chłodna",
+                                temp: 3.5,
+                                nx: 0.28,
+                                ny: 0.72,
+                            },
+                            {
+                                id: "T-402",
+                                name: "Termometr centralny",
+                                temp: 19.5,
+                                nx: 0.52,
+                                ny: 0.5,
+                            },
+                            {
+                                id: "T-403",
+                                name: "Termometr strefa południowa",
+                                temp: 38.0,
+                                nx: 0.74,
+                                ny: 0.28,
+                            },
+                        ],
+                    },
+                ];
+
+                function classifyTempColor(temp) {
+                    if (temp < 0 || temp > 34)
+                        return { bg: "#fee2e2", fg: "#b91c1c" };
+                    if (temp < 5 || temp > 28)
+                        return { bg: "#fef3c7", fg: "#b45309" };
+                    return { bg: "#dcfce7", fg: "#15803d" };
+                }
+
+                function buildMiniSvg(parcel) {
+                    const xs = parcel.points.map((p) => p.x);
+                    const ys = parcel.points.map((p) => p.y);
+                    const minX = Math.min(...xs);
+                    const maxX = Math.max(...xs);
+                    const minY = Math.min(...ys);
+                    const maxY = Math.max(...ys);
+                    const spanX = maxX - minX || 1;
+                    const spanY = maxY - minY || 1;
+
+                    const w = 116;
+                    const h = 92;
+                    const scale = Math.min(w / spanX, h / spanY);
+                    const offX = (w - spanX * scale) / 2 + 4;
+                    const offY = (h - spanY * scale) / 2 + 4;
+
+                    const pts = parcel.points
+                        .map((p) => {
+                            const sx = (offX + (p.x - minX) * scale).toFixed(1);
+                            const sy = (offY + (maxY - p.y) * scale).toFixed(1);
+                            return `${sx},${sy}`;
+                        })
+                        .join(" ");
+
+                    const dots = parcel.sensors
+                        .map((s) => {
+                            const sx = (offX + s.nx * spanX * scale).toFixed(1);
+                            const sy = (
+                                offY +
+                                (1 - s.ny) * spanY * scale
+                            ).toFixed(1);
+                            const col = classifyTempColor(s.temp).fg;
+                            return `<circle cx="${sx}" cy="${sy}" r="3.8" fill="${col}" stroke="#ffffff" stroke-width="1.2" />`;
+                        })
+                        .join("");
+
+                    return `
+                    <svg viewBox="0 0 124 100" width="124" height="100" aria-hidden="true">
+                        <polygon points="${pts}" fill="rgba(33, 110, 39, 0.16)" stroke="#216e27" stroke-width="2" />
+                        ${dots}
+                    </svg>
+                `;
+                }
+
+                const grid = document.getElementById("parcelsGrid");
+                if (!grid) return;
+
+                grid.innerHTML = MOCK_PARCELS.map((p) => {
+                    const temps = p.sensors.map((s) => s.temp);
+                    const minT = Math.min(...temps).toFixed(1);
+                    const maxT = Math.max(...temps).toFixed(1);
+                    const avgT = (
+                        temps.reduce((a, b) => a + b, 0) / temps.length
+                    ).toFixed(1);
+
+                    const sensorPills = p.sensors
+                        .map((s) => {
+                            const c = classifyTempColor(s.temp);
+                            return `<span class="sensor-chip" style="background:${c.bg};color:${c.fg}">${s.id}: ${s.temp.toFixed(1)}°C</span>`;
+                        })
+                        .join("");
+
+                    return `
+                    <article class="parcel-card">
+                        <div class="parcel-card-top">
+                            <div>
+                                <h2 class="parcel-card-title">#${p.fieldId} ${p.name}</h2>
+                                <div class="parcel-card-teryt">TERYT: ${p.teryt}</div>
+                            </div>
+                            <span class="parcel-card-badge">${p.crop} • ${p.areaHa.toFixed(2)} ha</span>
+                        </div>
+
+                        <div class="parcel-card-body">
+                            <div class="parcel-mini-preview">
+                                ${buildMiniSvg(p)}
+                            </div>
+                            <div class="parcel-card-stats">
+                                <div class="parcel-stat-row">
+                                    <span>Współrzędne:</span>
+                                    <strong>${p.lat.toFixed(6)}, ${p.lon.toFixed(6)}</strong>
+                                </div>
+                                <div class="parcel-stat-row">
+                                    <span>Czujki temperatury:</span>
+                                    <strong>${p.sensors.length} szt. (mock)</strong>
+                                </div>
+                                <div class="parcel-stat-row">
+                                    <span>Średnia / Zakres IDW:</span>
+                                    <strong>${avgT}°C (${minT}–${maxT}°C)</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="parcel-card-footer">
+                            <div class="parcel-sensors-pills">${sensorPills}</div>
+                            <a href="./dzialka.html?id=${p.fieldId}" class="btn btn-primary btn-sm">
+                                Podgląd działki &rarr;
+                            </a>
+                        </div>
+                    </article>
+                `;
+                }).join("");
+            })();
+        </script>
     </body>
 </html>
