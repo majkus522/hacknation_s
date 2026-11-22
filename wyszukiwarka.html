@@ -6,6 +6,11 @@
         <title>Perun – Wyszukiwarka działek i analiza środowiskowa</title>
         <link rel="stylesheet" href="./styles/main.css" />
         <link rel="stylesheet" href="./styles/wyszukiwarka.css" />
+        <style>
+            #perunWmsContour {
+                object-fit: fill !important;
+            }
+        </style>
     </head>
 
     <body>
@@ -305,26 +310,15 @@
                 const LOCKED_TERYT = "181103_2.0022.90/2";
                 const LOCKED_LAT = 50.317156;
                 const LOCKED_LON = 21.304768;
+                const CANVAS_W = 800;
+                const CANVAS_H = 600;
 
-                const FALLBACK_GEOMETRY = {
-                    wojewodztwo: "podkarpackie",
-                    powiat: "mielecki",
-                    gmina: "Wadowice Górne",
-                    obreb: "Dąbrówka Osuchowska",
-                    numer: "90/2",
-                    bbox: {
-                        minLon: 21.3037,
-                        maxLon: 21.3058,
-                        minLat: 50.3161,
-                        maxLat: 50.3182,
-                    },
-                    normalizedPoints: [
-                        { x: 0.878671, y: 1.0 },
-                        { x: 0.0, y: 0.915707 },
-                        { x: 0.218254, y: 0.0 },
-                        { x: 0.978396, y: 0.062693 },
-                    ],
-                };
+                const FALLBACK_RING = [
+                    { lon: 21.30541, lat: 50.31812 },
+                    { lon: 21.30392, lat: 50.31796 },
+                    { lon: 21.30429, lat: 50.31618 },
+                    { lon: 21.30558, lat: 50.3163 },
+                ];
 
                 const STATIC_REPORT = {
                     parcelTitle:
@@ -506,15 +500,21 @@
                     ],
                 };
 
-                let currentParcelData = FALLBACK_GEOMETRY;
-
                 function parseWktPolygon(wkt) {
-                    const match = wkt.match(/POLYGON\s*\(\(([^)]+)\)\)/i);
+                    const match = wkt.match(/\(\(\s*([^()]+)\s*\)\)/);
                     if (!match) return null;
-                    const pairs = match[1].split(",").map((pair) => {
-                        const parts = pair.trim().split(/\s+/).map(Number);
-                        return { lon: parts[0], lat: parts[1] };
-                    });
+                    const pairs = match[1]
+                        .split(",")
+                        .map((pair) => {
+                            const parts = pair.trim().split(/\s+/).map(Number);
+                            return { lon: parts[0], lat: parts[1] };
+                        })
+                        .filter(
+                            (p) =>
+                                Number.isFinite(p.lon) &&
+                                Number.isFinite(p.lat),
+                        );
+
                     if (pairs.length > 3) {
                         const first = pairs[0];
                         const last = pairs[pairs.length - 1];
@@ -528,26 +528,67 @@
                     return pairs;
                 }
 
-                function normalizeLonLatRing(ring) {
+                function buildParcelGeometry(ring, meta = {}) {
                     const lons = ring.map((p) => p.lon);
                     const lats = ring.map((p) => p.lat);
                     const minLon = Math.min(...lons);
                     const maxLon = Math.max(...lons);
                     const minLat = Math.min(...lats);
                     const maxLat = Math.max(...lats);
-                    const spanLon = maxLon - minLon || 1e-6;
-                    const spanLat = maxLat - minLat || 1e-6;
+
+                    const centerLon = (minLon + maxLon) / 2;
+                    const centerLat = (minLat + maxLat) / 2;
+                    const cosLat = Math.cos((centerLat * Math.PI) / 180);
+
+                    // Rzeczywiste rozpiętości w układzie równomiernym (korekta cos(lat) dla EPSG:4326)
+                    const widthEq = (maxLon - minLon) * cosLat;
+                    const heightEq = maxLat - minLat;
+                    const aspectRatio = widthEq / (heightEq || 1e-9);
+                    const maxSpan = Math.max(widthEq, heightEq, 1e-9);
+
+                    // Normalizacja do [0..1] Z ZACHOWANIEM proporcji (wspólny mianownik maxSpan)
+                    const normalizedPoints = ring.map((p) => ({
+                        x: Number(
+                            (((p.lon - minLon) * cosLat) / maxSpan).toFixed(6),
+                        ),
+                        y: Number(((p.lat - minLat) / maxSpan).toFixed(6)),
+                    }));
+
+                    // Wspólny viewBbox dopasowany proporcją (szer./wys. po korekcie cosLat) do 800x600
+                    const canvasAspect = CANVAS_W / CANVAS_H;
+                    const paddingFactor = 1.45;
+                    const viewHeightEq = Math.max(
+                        heightEq * paddingFactor,
+                        (widthEq * paddingFactor) / canvasAspect,
+                    );
+                    const viewWidthEq = viewHeightEq * canvasAspect;
+
+                    const viewSpanLat = viewHeightEq;
+                    const viewSpanLon = viewWidthEq / (cosLat || 1e-9);
+
+                    const viewBbox = {
+                        minLon: centerLon - viewSpanLon / 2,
+                        maxLon: centerLon + viewSpanLon / 2,
+                        minLat: centerLat - viewSpanLat / 2,
+                        maxLat: centerLat + viewSpanLat / 2,
+                    };
 
                     return {
-                        bbox: { minLon, maxLon, minLat, maxLat },
-                        normalizedPoints: ring.map((p) => ({
-                            x: Number(((p.lon - minLon) / spanLon).toFixed(6)),
-                            y: Number(((p.lat - minLat) / spanLat).toFixed(6)),
-                        })),
+                        wojewodztwo: meta.wojewodztwo || "podkarpackie",
+                        powiat: meta.powiat || "mielecki",
+                        gmina: meta.gmina || "Wadowice Górne",
+                        obreb: meta.obreb || "Dąbrówka Osuchowska",
+                        numer: meta.numer || "90/2",
+                        ring,
+                        aspectRatio,
+                        viewBbox,
+                        normalizedPoints,
                     };
                 }
 
-                function updateWmsLayer(bbox) {
+                let currentParcelData = buildParcelGeometry(FALLBACK_RING);
+
+                function updateWmsLayer(viewBbox) {
                     const img = document.getElementById("perunWmsContour");
                     if (!img) return;
                     const showContour =
@@ -566,13 +607,11 @@
                         return;
                     }
 
-                    const padLon = (bbox.maxLon - bbox.minLon) * 0.25 || 0.001;
-                    const padLat = (bbox.maxLat - bbox.minLat) * 0.25 || 0.001;
-                    const viewBbox = [
-                        (bbox.minLon - padLon).toFixed(6),
-                        (bbox.minLat - padLat).toFixed(6),
-                        (bbox.maxLon + padLon).toFixed(6),
-                        (bbox.maxLat + padLat).toFixed(6),
+                    const bboxParam = [
+                        viewBbox.minLon.toFixed(7),
+                        viewBbox.minLat.toFixed(7),
+                        viewBbox.maxLon.toFixed(7),
+                        viewBbox.maxLat.toFixed(7),
                     ].join(",");
 
                     img.style.display = "block";
@@ -580,7 +619,7 @@
                         "https://integracja.gugik.gov.pl/cgi-bin/KrajowaIntegracjaEwidencjiGruntow" +
                         `?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=${layers.join(",")}` +
                         "&STYLES=&FORMAT=image/png&TRANSPARENT=true&SRS=EPSG:4326" +
-                        `&BBOX=${viewBbox}&WIDTH=800&HEIGHT=600`;
+                        `&BBOX=${bboxParam}&WIDTH=${CANVAS_W}&HEIGHT=${CANVAS_H}`;
                     img.onerror = () => {
                         img.style.display = "none";
                     };
@@ -594,36 +633,25 @@
                     const showLabels =
                         document.getElementById("perunChkBuildings")?.checked ??
                         true;
-                    const pts = data.normalizedPoints;
+
                     const w = canvas.width;
                     const h = canvas.height;
                     ctx.clearRect(0, 0, w, h);
 
-                    const xs = pts.map((p) => p.x);
-                    const ys = pts.map((p) => p.y);
-                    const minX = Math.min(...xs);
-                    const maxX = Math.max(...xs);
-                    const minY = Math.min(...ys);
-                    const maxY = Math.max(...ys);
-                    const spanX = maxX - minX || 1;
-                    const spanY = maxY - minY || 1;
-
                     const ratioEl = document.getElementById("metaRatio");
-                    if (ratioEl)
-                        ratioEl.textContent = (spanX / spanY).toFixed(2);
+                    if (ratioEl) {
+                        ratioEl.textContent = data.aspectRatio.toFixed(2);
+                    }
 
-                    const pad = 95;
-                    const scale = Math.min(
-                        (w - pad * 2) / spanX,
-                        (h - pad * 2) / spanY,
-                    );
-                    const offsetX = (w - spanX * scale) / 2;
-                    const offsetY = (h - spanY * scale) / 2;
+                    const vb = data.viewBbox;
+                    const spanLon = vb.maxLon - vb.minLon || 1e-9;
+                    const spanLat = vb.maxLat - vb.minLat || 1e-9;
 
-                    const screenPts = pts.map((p) => ({
-                        sx: offsetX + (p.x - minX) * scale,
-                        sy: offsetY + (maxY - p.y) * scale,
-                        raw: p,
+                    // Rzutowanie 1:1 zgodne z BBOX podkładu WMS (brak zniekształceń aspect ratio)
+                    const screenPts = data.ring.map((pt, idx) => ({
+                        sx: ((pt.lon - vb.minLon) / spanLon) * w,
+                        sy: ((vb.maxLat - pt.lat) / spanLat) * h,
+                        norm: data.normalizedPoints[idx],
                     }));
 
                     ctx.beginPath();
@@ -651,10 +679,10 @@
                             ctx.fillStyle = "#0f172a";
                             ctx.font = "600 12px ui-monospace, monospace";
                             const labelX =
-                                pt.sx > w * 0.72 ? pt.sx - 130 : pt.sx + 10;
+                                pt.sx > w * 0.72 ? pt.sx - 135 : pt.sx + 10;
                             const labelY = pt.sy < 35 ? pt.sy + 18 : pt.sy - 8;
                             ctx.fillText(
-                                `P${idx + 1} (${pt.raw.x}, ${pt.raw.y})`,
+                                `P${idx + 1} (${pt.norm.x}, ${pt.norm.y})`,
                                 labelX,
                                 labelY,
                             );
@@ -665,22 +693,20 @@
                 function applyParcelToUi(data, sourceLabel) {
                     currentParcelData = data;
                     document.getElementById("metaWoj").textContent =
-                        data.wojewodztwo || "podkarpackie";
+                        data.wojewodztwo;
                     document.getElementById("metaPow").textContent =
-                        data.powiat || "mielecki";
-                    document.getElementById("metaGm").textContent =
-                        data.gmina || "Wadowice Górne";
+                        data.powiat;
+                    document.getElementById("metaGm").textContent = data.gmina;
                     document.getElementById("metaObreb").textContent =
-                        data.obreb || "Dąbrówka Osuchowska";
-                    document.getElementById("metaNr").textContent =
-                        data.numer || "90/2";
+                        data.obreb;
+                    document.getElementById("metaNr").textContent = data.numer;
                     document.getElementById("gpParcelIdBadge").textContent =
                         `${LOCKED_TERYT} • ${LOCKED_LAT}, ${LOCKED_LON}`;
                     document.getElementById("perunPunktyOutput").value =
                         JSON.stringify(data.normalizedPoints, null, 2);
                     document.getElementById("perunStatusBox").textContent =
                         sourceLabel;
-                    updateWmsLayer(data.bbox);
+                    updateWmsLayer(data.viewBbox);
                     renderParcelCanvas(data);
                 }
 
@@ -707,22 +733,21 @@
                         if (!ring || ring.length < 3)
                             throw new Error("Błąd WKT");
 
-                        const norm = normalizeLonLatRing(ring);
+                        const geom = buildParcelGeometry(ring, {
+                            wojewodztwo: parts[1],
+                            powiat: parts[2],
+                            gmina: parts[3],
+                            obreb: parts[4],
+                            numer: parts[5],
+                        });
+
                         applyParcelToUi(
-                            {
-                                wojewodztwo: parts[1] || "podkarpackie",
-                                powiat: parts[2] || "mielecki",
-                                gmina: parts[3] || "Wadowice Górne",
-                                obreb: parts[4] || "Dąbrówka Osuchowska",
-                                numer: parts[5] || "90/2",
-                                bbox: norm.bbox,
-                                normalizedPoints: norm.normalizedPoints,
-                            },
-                            `Pobrano działkę ${LOCKED_TERYT} bezpośrednio z Geoportal ULDK (EPSG:4326).`,
+                            geom,
+                            `Pobrano działkę ${LOCKED_TERYT} bezpośrednio z Geoportal ULDK (proporcje z korektą EPSG:4326).`,
                         );
                     } catch {
                         applyParcelToUi(
-                            FALLBACK_GEOMETRY,
+                            buildParcelGeometry(FALLBACK_RING),
                             `Załadowano zapisaną geometrię Geoportal dla działki ${LOCKED_TERYT} (${LOCKED_LAT}, ${LOCKED_LON}).`,
                         );
                     }
@@ -809,12 +834,12 @@
                 document
                     .getElementById("perunChkContour")
                     ?.addEventListener("change", () =>
-                        updateWmsLayer(currentParcelData.bbox),
+                        updateWmsLayer(currentParcelData.viewBbox),
                     );
                 document
                     .getElementById("perunChkBuildings")
                     ?.addEventListener("change", () => {
-                        updateWmsLayer(currentParcelData.bbox);
+                        updateWmsLayer(currentParcelData.viewBbox);
                         renderParcelCanvas(currentParcelData);
                     });
                 document
