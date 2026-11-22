@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Perun – Podgląd działki i interpolacja czujek</title>
+        <link rel="stylesheet" href="./styles/main.css" />
+        <link rel="stylesheet" href="./styles/fieldMap.css" />
+        <script src="./scripts/staticParcels.js" defer></script>
+        <script src="./scripts/dzialka.js" defer></script>
+    </head>
+
+    <body>
+        <header class="topbar">
+            <div class="topbar-left">
+                <a
+                    href="index.html"
+                    class="brand-link"
+                    aria-label="Powrót do listy działek"
+                >
+                    <img
+                        src="./images/perun_logo_black.svg"
+                        class="logo-topbar"
+                        alt="Perun"
+                    />
+                </a>
+                <div class="topbar-divider"></div>
+                <a href="index.html" class="btn-outline"
+                    >&larr; Lista działek</a
+                >
+                <a href="wyszukiwarka.html" class="btn-outline">Wyszukiwarka</a>
+                <div class="field-selector-group">
+                    <label for="fieldSelect">Działka:</label>
+                    <select id="fieldSelect"></select>
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <span class="user-session-badge">
+                    <span class="user-session-dot"></span>
+                    <span>INTERPOLACJA IDW • CZUJKI TEMPERATURY</span>
+                </span>
+            </div>
+        </header>
+
+        <main class="map-workspace">
+            <section
+                class="map-stage"
+                aria-label="Podgląd konturu działki i czujek temperatury"
+            >
+                <div class="map-toolbar-stack">
+                    <div class="oni-overlay-bar" id="oniOverlayBar">
+                        <button
+                            type="button"
+                            class="oni-mode-btn is-active"
+                            data-overlay-mode="temp"
+                        >
+                            Nakładka temperatury (IDW)
+                        </button>
+                        <button
+                            type="button"
+                            class="oni-mode-btn oni-mode-off"
+                            data-overlay-mode="off"
+                        >
+                            Sam kontur działki
+                        </button>
+                    </div>
+
+                    <div class="map-toolbar">
+                        <label class="toolbar-toggle">
+                            <input type="checkbox" id="toggleSensors" checked />
+                            <span>Czujki temperatury</span>
+                        </label>
+                        <div class="toolbar-sep"></div>
+                        <button type="button" id="btnZoomIn" title="Przybliż">
+                            +
+                        </button>
+                        <button type="button" id="btnZoomOut" title="Oddal">
+                            &minus;
+                        </button>
+                        <button
+                            type="button"
+                            id="btnFitView"
+                            title="Dopasuj widok"
+                        >
+                            Dopasuj
+                        </button>
+                    </div>
+                </div>
+
+                <svg id="fieldSvg" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <pattern
+                            id="gridPattern"
+                            width="25"
+                            height="25"
+                            patternUnits="userSpaceOnUse"
+                        >
+                            <path
+                                d="M 25 0 L 0 0 0 25"
+                                fill="none"
+                                stroke="#e4e7de"
+                                stroke-width="0.6"
+                            />
+                        </pattern>
+                        <clipPath id="fieldClip">
+                            <polygon id="fieldClipPolygon" points="" />
+                        </clipPath>
+                    </defs>
+
+                    <g id="viewportLayer">
+                        <rect
+                            x="-10000"
+                            y="-10000"
+                            width="20000"
+                            height="20000"
+                            fill="url(#gridPattern)"
+                        />
+                        <g id="heatmapLayer" clip-path="url(#fieldClip)">
+                            <image
+                                id="heatmapImage"
+                                href=""
+                                preserveAspectRatio="none"
+                            />
+                            <g id="oniGridLayer"></g>
+                        </g>
+                        <g id="fieldLayer"></g>
+                        <g id="cornersLayer"></g>
+                        <g id="sensorsLayer"></g>
+                        <g id="probeLayer"></g>
+                    </g>
+                </svg>
+
+                <div class="map-coords" id="cursorCoords">
+                    X: 0.0 m | Y: 0.0 m
+                </div>
+
+                <div class="map-legend">
+                    <div class="legend-group" id="heatmapLegendGroup">
+                        <span class="legend-title">Temperatura czujek:</span>
+                        <div class="legend-scale">
+                            <span>0°C</span>
+                            <div
+                                id="legendGradient"
+                                class="legend-gradient"
+                            ></div>
+                            <span>45°C</span>
+                        </div>
+                    </div>
+                    <div class="legend-sep"></div>
+                    <div class="legend-group">
+                        <span><i class="dot dot-ok"></i> OK (5–28°C)</span>
+                        <span
+                            ><i class="dot dot-warn"></i> Ostrzeżenie
+                            (28–34°C)</span
+                        >
+                        <span
+                            ><i class="dot dot-crit"></i> Krytyczny (&gt;34°C /
+                            &lt;0°C)</span
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <aside class="map-sidebar">
+                <div class="sidebar-card">
+                    <h2>Przełącz działkę (4 statyczne)</h2>
+                    <div id="parcelSwitchList" class="parcel-list-stack"></div>
+                </div>
+
+                <div class="sidebar-card">
+                    <h2>Parametry działki</h2>
+                    <dl class="meta-list">
+                        <div>
+                            <dt>Nazwa / TERYT:</dt>
+                            <dd id="infoFieldName">—</dd>
+                        </div>
+                        <div>
+                            <dt>Koordynaty:</dt>
+                            <dd id="infoCoords">—</dd>
+                        </div>
+                        <div>
+                            <dt>Czujki temperatury:</dt>
+                            <dd id="infoSensorsCount">—</dd>
+                        </div>
+                        <div>
+                            <dt>Temperatura (IDW):</dt>
+                            <dd id="infoMetricSummary">—</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <div class="sidebar-card">
+                    <h2>Czujki na tej działce</h2>
+                    <div
+                        id="sensorListContainer"
+                        class="parcel-list-stack"
+                    ></div>
+                </div>
+
+                <div class="sidebar-card">
+                    <h2>Odczyt wybranej czujki</h2>
+                    <div id="sensorDetails" class="details-empty">
+                        Kliknij czujkę na mapie lub liście powyżej.
+                    </div>
+                </div>
+
+                <div class="sidebar-card">
+                    <h2>Sonda punktowa na polu (IDW)</h2>
+                    <div id="probeDetails" class="details-empty">
+                        Kliknij dowolny punkt wewnątrz zielonego obrysu działki,
+                        aby sprawdzić temperaturę wyliczoną metodą IDW.
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <span>&copy; 2026 Perun. Wszelkie prawa zastrzeżone.</span>
+                <div class="footer-links">
+                    <a href="index.html">Lista działek</a>
+                    <a href="dzialka.html?id=1">Podgląd działki</a>
+                    <a href="wyszukiwarka.html">Wyszukiwarka</a>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>

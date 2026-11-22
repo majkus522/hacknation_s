@@ -1,0 +1,389 @@
+.search-page-main {
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.perun-gp-widget {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.gp-page-header {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.35rem 1.5rem;
+    box-shadow: 0 6px 18px -6px rgba(0, 0, 0, 0.06);
+}
+
+.gp-page-header h1 {
+    font-size: 1.5rem;
+    margin: 0.45rem 0 0.35rem;
+    color: var(--text-main);
+}
+
+.gp-page-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
+.perun-gp-panel {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+}
+
+.perun-gp-search-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.perun-gp-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.perun-gp-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.perun-gp-input-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.perun-gp-input,
+.gp-select {
+    flex: 1;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: #f1f5f9;
+    color: #334155;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.perun-gp-input:read-only,
+.perun-gp-input:disabled,
+.gp-select:disabled {
+    cursor: not-allowed;
+    opacity: 0.92;
+}
+
+.perun-gp-btn {
+    padding: 0.55rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--accent);
+    color: #ffffff;
+    font-size: 0.86rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.perun-gp-btn:hover:not(:disabled) {
+    background-color: var(--accent-hover);
+}
+
+.perun-gp-btn:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+}
+
+.perun-gp-toggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: 0.95rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid #e2e8f0;
+    font-size: 0.85rem;
+    color: var(--text-main);
+}
+
+.perun-gp-toggles label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.perun-gp-status {
+    padding: 0.65rem 1rem;
+    border-radius: 8px;
+    background-color: #eef6ee;
+    border: 1px solid #bfe3c2;
+    color: #1f6b24;
+    font-size: 0.86rem;
+    font-weight: 500;
+}
+
+.perun-gp-workspace {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 1.25rem;
+}
+
+.gp-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.15rem 1.3rem;
+    box-shadow: 0 6px 18px -6px rgba(0, 0, 0, 0.05);
+}
+
+.gp-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.85rem;
+}
+
+.gp-card-title {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.gp-card-badge {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    background-color: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+}
+
+.perun-gp-map-box {
+    position: relative;
+    border: 1px solid #dcded6;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f9faf6;
+}
+
+#perunWmsContour {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    z-index: 1;
+}
+
+#perunDzialkaCanvas {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: block;
+    z-index: 2;
+}
+
+.gp-parcel-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin-top: 0.85rem;
+}
+
+.gp-meta-item {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.gp-meta-item span {
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+}
+
+.gp-meta-item strong {
+    font-size: 0.86rem;
+    color: var(--text-main);
+}
+
+.gp-copy-btn {
+    padding: 0.45rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: #ffffff;
+    color: var(--text-main);
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.gp-copy-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.perun-gp-textarea {
+    width: 100%;
+    min-height: 360px;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background-color: #0f172a;
+    color: #e2e8f0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.gp-source-note {
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+.analysis-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+    margin-bottom: 0.85rem;
+}
+
+.analysis-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.analysis-report {
+    line-height: 1.55;
+    color: var(--text-main);
+}
+
+.report-header {
+    padding-bottom: 0.85rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.report-header h3 {
+    font-size: 1.18rem;
+    margin-bottom: 0.35rem;
+}
+
+.report-header p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+}
+
+.report-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.report-box {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.95rem 1.05rem;
+    font-size: 0.86rem;
+}
+
+.report-box h4 {
+    font-size: 0.96rem;
+    margin-bottom: 0.5rem;
+    color: #14532d;
+}
+
+.report-box ul {
+    padding-left: 1.2rem;
+    margin-top: 0.35rem;
+}
+
+.report-box li {
+    margin-bottom: 0.3rem;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+    font-size: 0.83rem;
+}
+
+.report-table td {
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.report-anomalies-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.55rem;
+    margin-top: 0.55rem;
+}
+
+.anomaly-chip {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.78rem;
+}
+
+@media print {
+    header,
+    footer,
+    .gp-page-header,
+    .perun-gp-panel,
+    #perunStatusBox,
+    .perun-gp-workspace,
+    .analysis-panel,
+    #analysisReportStatus {
+        display: none !important;
+    }
+
+    .search-page-main {
+        padding: 0;
+        max-width: 100%;
+    }
+
+    .gp-card {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+    }
+}
+
+@media (max-width: 960px) {
+    .perun-gp-search-grid,
+    .perun-gp-workspace,
+    .report-grid,
+    .gp-parcel-meta,
+    .analysis-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .report-anomalies-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

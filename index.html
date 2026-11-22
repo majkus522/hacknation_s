@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Perun – Panel działek</title>
+        <link rel="stylesheet" href="./styles/main.css" />
+        <script src="./scripts/staticParcels.js" defer></script>
+        <script src="./scripts/index.js" defer></script>
+    </head>
+
+    <body>
+        <header class="navbar">
+            <div class="navbar-container">
+                <a
+                    href="index.html"
+                    class="brand-link"
+                    aria-label="Panel działek Perun"
+                >
+                    <img
+                        src="./images/perun_logo_black.svg"
+                        class="logo-topbar"
+                        alt="Perun"
+                    />
+                </a>
+
+                <nav class="nav-actions">
+                    <a href="index.html" class="nav-link is-active"
+                        >Moje działki</a
+                    >
+                    <a href="dzialka.html?id=1" class="nav-link"
+                        >Podgląd mapy i czujek</a
+                    >
+                    <a href="wyszukiwarka.html" class="btn btn-primary btn-sm"
+                        >Wyszukiwarka działek</a
+                    >
+                </nav>
+            </div>
+        </header>
+
+        <main class="dashboard-main">
+            <section class="dashboard-header">
+                <div>
+                    <span class="hero-badge"
+                        >Panel monitoringu upraw • Wersja demonstracyjna</span
+                    >
+                    <h1>Lista działek</h1>
+                    <p class="dashboard-subtitle">
+                        Wybierz jedną z 4 zdefiniowanych działek, aby otworzyć
+                        jej podgląd oraz interpolację temperatur z czujek.
+                    </p>
+                </div>
+                <div class="dashboard-header-actions">
+                    <a href="wyszukiwarka.html" class="btn-outline"
+                        >Przejdź do wyszukiwarki i raportu &rarr;</a
+                    >
+                </div>
+            </section>
+
+            <section
+                id="parcelsGrid"
+                class="parcels-grid"
+                aria-label="Lista działek"
+            ></section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <span>&copy; 2026 Perun. Wszelkie prawa zastrzeżone.</span>
+                <div class="footer-links">
+                    <a href="index.html">Lista działek</a>
+                    <a href="dzialka.html?id=1">Podgląd działki</a>
+                    <a href="wyszukiwarka.html">Wyszukiwarka</a>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>

@@ -1,0 +1,155 @@
+(function () {
+    "use strict";
+
+    window.PERUN_STATIC_PARCELS = [
+        {
+            fieldId: 1,
+            teryt: "181103_2.0022.90/2",
+            name: "Dąbrówka Osuchowska 90/2",
+            lat: 50.317156,
+            lon: 21.304768,
+            crop: "Burak cukrowy",
+            points: [
+                { x: 0.878671, y: 1.0 },
+                { x: 0.0, y: 0.915707 },
+                { x: 0.218254, y: 0.0 },
+                { x: 0.978396, y: 0.062693 },
+            ],
+            sensors: [
+                {
+                    id: "T-101",
+                    name: "Termometr północny",
+                    temp: 12.0,
+                    nx: 0.35,
+                    ny: 0.72,
+                },
+                {
+                    id: "T-102",
+                    name: "Termometr środkowy",
+                    temp: 21.5,
+                    nx: 0.55,
+                    ny: 0.48,
+                },
+                {
+                    id: "T-103",
+                    name: "Termometr południowy (strefa nagrzana)",
+                    temp: 36.5,
+                    nx: 0.78,
+                    ny: 0.22,
+                },
+            ],
+        },
+        {
+            fieldId: 2,
+            teryt: "142510_5.0010.AR_1.170",
+            name: "Grabina 170",
+            lat: 51.316505,
+            lon: 21.304529,
+            crop: "Pszenica ozima",
+            points: [
+                { x: 0.0, y: 0.0 },
+                { x: 0.717056, y: 0.09754 },
+                { x: 0.747255, y: 0.274031 },
+                { x: 0.851465, y: 0.800754 },
+                { x: 0.525912, y: 1.0 },
+            ],
+            sensors: [
+                {
+                    id: "T-201",
+                    name: "Termometr dolina",
+                    temp: 9.0,
+                    nx: 0.3,
+                    ny: 0.2,
+                },
+                {
+                    id: "T-202",
+                    name: "Termometr centralny",
+                    temp: 18.0,
+                    nx: 0.58,
+                    ny: 0.5,
+                },
+                {
+                    id: "T-203",
+                    name: "Termometr grzbiet",
+                    temp: 29.5,
+                    nx: 0.72,
+                    ny: 0.78,
+                },
+            ],
+        },
+        {
+            fieldId: 3,
+            teryt: "181204_2.0008.44/1",
+            name: "Mielec – Kwatera Wschodnia",
+            lat: 50.289412,
+            lon: 21.428901,
+            crop: "Kukurydza",
+            points: [
+                { x: 0.05, y: 0.12 },
+                { x: 0.95, y: 0.08 },
+                { x: 0.9, y: 0.92 },
+                { x: 0.12, y: 0.88 },
+            ],
+            sensors: [
+                {
+                    id: "T-301",
+                    name: "Termometr zachód",
+                    temp: 16.0,
+                    nx: 0.25,
+                    ny: 0.5,
+                },
+                {
+                    id: "T-302",
+                    name: "Termometr środek",
+                    temp: 22.0,
+                    nx: 0.52,
+                    ny: 0.5,
+                },
+                {
+                    id: "T-303",
+                    name: "Termometr wschód",
+                    temp: 24.5,
+                    nx: 0.8,
+                    ny: 0.5,
+                },
+            ],
+        },
+        {
+            fieldId: 4,
+            teryt: "182001_2.0015.112",
+            name: "Rzeszów – Strefa Doświadczalna",
+            lat: 50.041321,
+            lon: 21.999184,
+            crop: "Rzepak ozimy",
+            points: [
+                { x: 0.0, y: 0.2 },
+                { x: 0.8, y: 0.0 },
+                { x: 1.0, y: 0.85 },
+                { x: 0.2, y: 1.0 },
+            ],
+            sensors: [
+                {
+                    id: "T-401",
+                    name: "Termometr chłodny",
+                    temp: 3.5,
+                    nx: 0.28,
+                    ny: 0.72,
+                },
+                {
+                    id: "T-402",
+                    name: "Termometr umiarkowany",
+                    temp: 19.0,
+                    nx: 0.52,
+                    ny: 0.5,
+                },
+                {
+                    id: "T-403",
+                    name: "Termometr krytyczny",
+                    temp: 39.0,
+                    nx: 0.76,
+                    ny: 0.26,
+                },
+            ],
+        },
+    ];
+})();
